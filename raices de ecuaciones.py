@@ -1,10 +1,8 @@
 import numpy as np
 import os
 
+# ZONA DE EDICIÓN DE FUNCIONES (MODIFICAR)
 
-# =================================================================
-# ZONA DE EDICIÓN DE FUNCIONES (MODIFICAR SEGUN MI EVALUACION)
-# =================================================================
 
 def f(x: float) -> float:
     return x**3 - 2*x - 5
@@ -15,7 +13,7 @@ def f(x: float) -> float:
     - Exponencial e^-x - x    --> return np.exp(-x) - x
     - Trigonométrica sen(x)   --> return np.sin(x)
     """
-    return np.exp(-x) - x  # <--- CAMBIA ESTO
+    return np.exp(-x) - x  
 
 def df(x: float) -> float:
     return 3*x**2 -2
@@ -124,4 +122,5 @@ def menu():
         os.system('cls' if os.name == 'nt' else 'clear')
 
 if __name__ == "__main__":
+
     menu()
