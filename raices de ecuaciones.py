@@ -1,28 +1,28 @@
 import numpy as np
 import os
 
-# ZONA DE EDICIÓN DE FUNCIONES (MODIFICAR)
 
+# 1. DILATACIÓN TÉRMICA (CABLEADO PUENTE G.R.U)
+# def f(x):
+    # f(x) = x^3 - 9x - 110
+    # return x**3 - 9*x - 110
 
-def f(x: float) -> float:
-    return x**3 - 2*x - 5
-    """ 
-    Escribe aquí tu función f(x).
-    Ejemplos:
-    - Polinomio x^3 - 2x - 5  --> return x**3 - 2*x - 5
-    - Exponencial e^-x - x    --> return np.exp(-x) - x
-    - Trigonométrica sen(x)   --> return np.sin(x)
-    """
-    return np.exp(-x) - x  
+# 2. REFRIGERACIÓN (SUBESTACIÓN CUATRICENTENARIO)
+# def f(t):
+    # f(t) = 34 + (95 - 34)e^(-0.079t) - 47
+    # return 34 + (95 - 34) * np.exp(-0.079 * t) - 47
 
-def df(x: float) -> float:
-    return 3*x**2 -2
-    """ 
-    Escribe aquí la DERIVADA f'(x) (Solo para Newton-Raphson).
-    Ejemplo de e^-x - x:
-    f'(x) = -e^-x - 1         --> return -np.exp(-x) - 1
-    """
-    return -np.exp(-x) - 1 
+# 3. REACTANCIA (GENERADOR TERMOZULIA)
+# def f(x):
+    # f(x) = x^2 - 4.98ln(x + 1) - 5
+    # Nota: np.log es el logaritmo natural (ln)
+    # return x**2 - 4.98 * np.log(x + 1) - 5
+
+# 4. RESISTENCIA DE ARCO (FALLA A TIERRA)
+#def f(R):
+    # f(R) = R * e^(0.1R) - 3.32
+    # return R * np.exp(0.1 * R) - 3.32
+
 
 
 TOLERANCIA = 1e-5
@@ -124,3 +124,4 @@ def menu():
 if __name__ == "__main__":
 
     menu()
+
