@@ -33,9 +33,6 @@ def resolver_sistemas_lu():
     lu2, piv2 = lu_factor(A2)
     Q = lu_solve((lu2, piv2), b2)
 
-    # ==========================================
-    # SALIDA DE RESULTADOS (4 decimales)
-    # ==========================================
     print("=== RESULTADOS VÍA DESCOMPOSICIÓN LU ===")
     print("\n[Sistema 1: Tensiones]")
     for i, val in enumerate(V):
@@ -46,4 +43,5 @@ def resolver_sistemas_lu():
         print(f"Q{i+1} = {val:.4f}")
 
 if __name__ == "__main__":
+
     resolver_sistemas_lu()
