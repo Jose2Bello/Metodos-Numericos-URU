@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Mar 21 10:47:08 2026
-
+Created on Fri Apr 17 20:17:45 2026
 @author: joseb
+
+Regresión polinomial cuadrática con datos de potencia eléctrica
 """
+
 import numpy as np
 import warnings
 warnings.filterwarnings('ignore')
 
-# Datos proporcionados
+# Datos proporcionados (con punto decimal en lugar de coma)
 data_text = """Hora_Dia	Potencia_KW
 6	503.6480939
 6.020033389	518.1973538
@@ -685,4 +687,3 @@ print(f"  Coeficiente a: {a_manual:.6f}")
 print(f"  Coeficiente b: {b_manual:.6f}")
 print(f"  Coeficiente c: {c_manual:.6f}")
 print(f"\n  Ecuación: P(h) = {a_manual:.6f}·h² + {b_manual:.6f}·h + {c_manual:.6f}")
-
