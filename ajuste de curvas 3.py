@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Mar 20 21:09:45 2026
+Created on Fri Apr 17 20:37:10 2026
 
 @author: joseb
+"""
+
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Mar 20 21:09:45 2026
+@author: joseb
+
+Análisis de regresión para etapa de desgaste crítico (Ciclos > 3000)
 """
 
 import numpy as np
@@ -12,7 +20,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import r2_score
 
-# Datos proporcionados (formato texto)
+# Datos proporcionados (Ciclos_Operacion y Vibracion_mm_s)
 data_text = """Ciclos_Operacion	Vibracion_mm_s
 1000	43.27487691
 1008.347245	43.46389235
@@ -632,7 +640,7 @@ for line in lines[1:]:
 
 df = pd.DataFrame(data, columns=['Ciclos_Operacion', 'Vibracion_mm_s'])
 
-
+# Filtrar datos con ciclos > 3000
 df_filtrado = df[df['Ciclos_Operacion'] > 3000].copy()
 
 print(f"\nDatos totales: {len(df)} registros")
@@ -640,7 +648,9 @@ print(f"Datos con ciclos > 3000: {len(df_filtrado)} registros")
 print(f"   Rango de ciclos: [{df_filtrado['Ciclos_Operacion'].min():.2f}, {df_filtrado['Ciclos_Operacion'].max():.2f}]")
 print(f"   Rango de vibración: [{df_filtrado['Vibracion_mm_s'].min():.2f}, {df_filtrado['Vibracion_mm_s'].max():.2f}] mm/s")
 
-
+# ============================================================================
+# REGRESIÓN LINEAL - DATOS FILTRADOS (Ciclos > 3000)
+# ============================================================================
 print("\n" + "="*80)
 print("REGRESIÓN LINEAL - DATOS FILTRADOS (Ciclos > 3000)")
 print("="*80)
@@ -656,7 +666,7 @@ m_filt = modelo_lineal.coef_[0]
 b_filt = modelo_lineal.intercept_
 r_filt = np.sqrt(modelo_lineal.score(X_filt, y_filt))
 
-print(f"\n Resultados de regresión lineal:")
+print(f"\n📈 Resultados de regresión lineal:")
 print(f"   Pendiente (m):     {m_filt:.6f}")
 print(f"   Intercepto (b):    {b_filt:.6f}")
 print(f"   Coef. Correlación: {r_filt:.6f}")
@@ -666,7 +676,7 @@ print(f"\n   Ecuación: V(C) = {m_filt:.6f} · C + {b_filt:.6f}")
 # Proyección a 6500 ciclos
 C_proyeccion = 6500
 V_proyeccion_lineal = m_filt * C_proyeccion + b_filt
-print(f"\n Proyección a {C_proyeccion} ciclos (lineal): {V_proyeccion_lineal:.4f} mm/s")
+print(f"\n🔮 Proyección a {C_proyeccion} ciclos (lineal): {V_proyeccion_lineal:.4f} mm/s")
 
 # ============================================================================
 # REGRESIÓN POLINOMIAL GRADO 2 (para mejor ajuste)
@@ -686,7 +696,7 @@ a_poly = modelo_poly.coef_[2]
 b_poly = modelo_poly.coef_[1]
 c_poly = modelo_poly.intercept_
 
-print(f"\nResultados de regresión polinomial (grado 2):")
+print(f"\n📈 Resultados de regresión polinomial (grado 2):")
 print(f"   Coeficiente a: {a_poly:.6f}")
 print(f"   Coeficiente b: {b_poly:.6f}")
 print(f"   Coeficiente c: {c_poly:.6f}")
@@ -695,7 +705,7 @@ print(f"\n   Ecuación: V(C) = {a_poly:.6f}·C² + {b_poly:.6f}·C + {c_poly:.6f
 
 # Proyección con polinomio grado 2
 V_proyeccion_poly = a_poly * (C_proyeccion**2) + b_poly * C_proyeccion + c_poly
-print(f"\nProyección a {C_proyeccion} ciclos (polinomial g2): {V_proyeccion_poly:.4f} mm/s")
+print(f"\n🔮 Proyección a {C_proyeccion} ciclos (polinomial g2): {V_proyeccion_poly:.4f} mm/s")
 
 # ============================================================================
 # COMPARACIÓN CON TODOS LOS DATOS
@@ -710,13 +720,13 @@ y_all = df['Vibracion_mm_s'].values
 modelo_all = LinearRegression()
 modelo_all.fit(X_all, y_all)
 
-print(f"\n Con todos los datos (600 puntos):")
+print(f"\n📊 Con todos los datos ({len(df)} puntos):")
 print(f"   Pendiente (m):  {modelo_all.coef_[0]:.6f}")
 print(f"   Intercepto (b): {modelo_all.intercept_:.6f}")
 print(f"   R²:             {modelo_all.score(X_all, y_all):.6f}")
 
 V_proyeccion_all = modelo_all.coef_[0] * C_proyeccion + modelo_all.intercept_
-print(f"\n Proyección a {C_proyeccion} ciclos (todos datos): {V_proyeccion_all:.4f} mm/s")
+print(f"\n🔮 Proyección a {C_proyeccion} ciclos (todos datos): {V_proyeccion_all:.4f} mm/s")
 
 # ============================================================================
 # VISUALIZACIÓN
@@ -754,7 +764,61 @@ ax1.set_title('Regresión Lineal - Comparación de modelos')
 ax1.legend(loc='best', fontsize=8)
 ax1.grid(True, alpha=0.3)
 
+# Gráfico 2: Regresión polinomial grado 2
+ax2 = axes[0, 1]
+ax2.scatter(df_filtrado['Ciclos_Operacion'], df_filtrado['Vibracion_mm_s'], 
+            alpha=0.6, s=15, color='blue', label='Datos reales (C>3000)')
 
+# Curva polinomial
+x_curve = np.linspace(df_filtrado['Ciclos_Operacion'].min(), df_filtrado['Ciclos_Operacion'].max(), 200)
+y_curve = a_poly * x_curve**2 + b_poly * x_curve + c_poly
+ax2.plot(x_curve, y_curve, 'r-', linewidth=2, label=f'Regresión polinomial g2 (R²={modelo_poly.score(X_poly, y_filt):.4f})')
+
+ax2.scatter(C_proyeccion, V_proyeccion_poly, color='green', s=120, marker='*', 
+            edgecolors='black', linewidth=1.5, zorder=5, label=f'Proyección a {C_proyeccion} ciclos')
+ax2.axvline(x=C_proyeccion, color='green', linestyle='--', alpha=0.5)
+
+ax2.set_xlabel('Ciclos de Operación')
+ax2.set_ylabel('Vibración (mm/s)')
+ax2.set_title('Regresión Polinomial Grado 2 - Datos filtrados (C>3000)')
+ax2.legend(loc='best', fontsize=8)
+ax2.grid(True, alpha=0.3)
+
+# Gráfico 3: Comparación de predicciones
+ax3 = axes[1, 0]
+modelos = ['Lineal\n(C>3000)', 'Polinomial g2\n(C>3000)', 'Lineal\n(Todos)']
+predicciones = [V_proyeccion_lineal, V_proyeccion_poly, V_proyeccion_all]
+colors_pred = ['green', 'red', 'blue']
+bars = ax3.bar(modelos, predicciones, color=colors_pred, edgecolor='black', linewidth=1.5)
+ax3.axhline(y=V_proyeccion_lineal, color='green', linestyle='--', alpha=0.5, label=f'Lineal C>3000: {V_proyeccion_lineal:.1f}')
+ax3.set_ylabel('Vibración (mm/s)')
+ax3.set_title(f'Comparación de predicciones a {C_proyeccion} ciclos')
+ax3.grid(True, alpha=0.3, axis='y')
+
+for bar, val in zip(bars, predicciones):
+    ax3.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1, f'{val:.1f}', 
+             ha='center', va='bottom', fontweight='bold')
+
+# Gráfico 4: Residuos del modelo lineal filtrado
+ax4 = axes[1, 1]
+y_pred_lineal = modelo_lineal.predict(X_filt)
+residuos = y_filt - y_pred_lineal
+ax4.scatter(y_pred_lineal, residuos, alpha=0.6, s=20, color='purple')
+ax4.axhline(y=0, color='red', linestyle='--', linewidth=1.5)
+ax4.set_xlabel('Valores predichos (mm/s)')
+ax4.set_ylabel('Residuos (mm/s)')
+ax4.set_title('Gráfico de Residuos - Modelo Lineal (C>3000)')
+ax4.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+# ============================================================================
+# RESUMEN FINAL
+# ============================================================================
+print("\n" + "="*80)
+print("RESUMEN FINAL")
+print("="*80)
 
 print(f"""
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -776,6 +840,13 @@ print(f"""
 │  • R²:                {modelo_poly.score(X_poly, y_filt):.6f}                    │
 │  • Vibración a 6500 ciclos: {V_proyeccion_poly:.4f} mm/s                      │
 │                                                                     │
-─────────────────────────────────────────────────────────────────────
+│  MODELO LINEAL CON TODOS LOS DATOS                                  │
+│  ────────────────────────────────────────────────────────────────   │
+│  • Pendiente (m):     {modelo_all.coef_[0]:.6f}                              │
+│  • R²:                {modelo_all.score(X_all, y_all):.6f}                    │
+│  • Vibración a 6500 ciclos: {V_proyeccion_all:.4f} mm/s                      │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 """)
 
+print("\n✅ Análisis completado. Se recomienda usar el modelo con mayor R² para predicciones.")
